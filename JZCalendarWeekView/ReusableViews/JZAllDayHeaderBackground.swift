@@ -16,6 +16,7 @@ open class JZAllDayHeaderBackground: UICollectionReusableView {
         self.clipsToBounds = true
         self.backgroundColor = .white
         setupBottomDivider()
+		self.layer.zPosition = 1010
     }
 
     public required init?(coder aDecoder: NSCoder) {

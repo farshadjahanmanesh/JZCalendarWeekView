@@ -72,7 +72,7 @@ open class JZBaseWeekView: UIView {
     }
     private var isFirstAppear: Bool = true
     internal var isAllDaySupported: Bool!
-    internal var scrollDirection: ScrollDirection?
+	internal var scrollDirection: ScrollDirection?
 
     // Scrollable Range
     internal var scrollableEdges: (leftX: CGFloat?, rightX: CGFloat?)
@@ -451,7 +451,6 @@ extension JZBaseWeekView: UICollectionViewDataSource {
 
     open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var view = UICollectionReusableView()
-
         switch kind {
         case JZSupplementaryViewKinds.columnHeader:
             if let columnHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kind, for: indexPath) as? JZColumnHeader {
@@ -484,6 +483,8 @@ extension JZBaseWeekView: UICollectionViewDataSource {
             }
         default: break
         }
+	
+
         return view
     }
 
@@ -531,16 +532,24 @@ extension JZBaseWeekView: UICollectionViewDelegate, UICollectionViewDelegateFlow
 
     /// Some actions need to be done when scroll ends
     private func endOfScroll() {
+		
         // vertical scroll should not load page, handled in loadPage method
         loadPage()
+		if collectionView.isInEditMode {return}
         self.scrollDirection = nil
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let scrollDirection = scrollDirection else { return }
+		
         if let lockedAt = scrollDirection.lockedAt {
             if scrollDirection.direction == .horizontal {
-                scrollView.contentOffset.y = lockedAt
+				if collectionView.isInEditMode {
+					 scrollView.contentOffset.x = lockedAt
+				} else {
+					scrollView.contentOffset.y = lockedAt
+				}
+				
             } else {
                 scrollView.contentOffset.x = lockedAt
             }

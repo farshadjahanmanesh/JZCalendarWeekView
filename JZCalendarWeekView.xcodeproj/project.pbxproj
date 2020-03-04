@@ -11,6 +11,7 @@
 		1F2F29B722959B6C004B7CA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2F29B622959B6C004B7CA1 /* Constants.swift */; };
 		1F2F29B922959C1E004B7CA1 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2F29B822959C1E004B7CA1 /* Helpers.swift */; };
 		1FB6140D2130FE7400F08ACD /* JZCurrentTimelinePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB6140C2130FE7400F08ACD /* JZCurrentTimelinePage.swift */; };
+		87729B03240D78B80033B551 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87729B02240D78B80033B551 /* EventView.swift */; };
 		8E023C78206C6E4B00C523BE /* JZLongPressWeekViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E023C77206C6E4B00C523BE /* JZLongPressWeekViewTests.swift */; };
 		8E023C7A206C6E4B00C523BE /* JZCalendarWeekView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E1BA94A206B4329007BE13C /* JZCalendarWeekView.framework */; };
 		8E023C84206C732300C523BE /* JZBaseEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E023C83206C732300C523BE /* JZBaseEvent.swift */; };
@@ -53,6 +54,7 @@
 		1F2F29B622959B6C004B7CA1 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1F2F29B822959C1E004B7CA1 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		1FB6140C2130FE7400F08ACD /* JZCurrentTimelinePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JZCurrentTimelinePage.swift; sourceTree = "<group>"; };
+		87729B02240D78B80033B551 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		8E023C75206C6E4B00C523BE /* JZCalendarWeekViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JZCalendarWeekViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E023C77206C6E4B00C523BE /* JZLongPressWeekViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JZLongPressWeekViewTests.swift; sourceTree = "<group>"; };
 		8E023C79206C6E4B00C523BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				8E1BA955206B4687007BE13C /* Utils */,
 				8E1BA94D206B4329007BE13C /* JZCalendarWeekView.h */,
 				8E1BA94E206B4329007BE13C /* Info.plist */,
+				87729B02240D78B80033B551 /* EventView.swift */,
 			);
 			path = JZCalendarWeekView;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				8E1BA957206B47DA007BE13C /* JZBaseWeekView.swift in Sources */,
 				8E21E8B020916A96002D72D0 /* JZLongPressWeekView.swift in Sources */,
 				8EF7EBD120A55D1000D5CEEA /* JZAllDayHeaderBackground.swift in Sources */,
+				87729B03240D78B80033B551 /* EventView.swift in Sources */,
 				8E023C86206C956F00C523BE /* JZWeekViewColors.swift in Sources */,
 				8E1BA96A206B5350007BE13C /* JZWeekViewHelper.swift in Sources */,
 				8E1BA962206B4B99007BE13C /* JZRowHeader.swift in Sources */,
@@ -520,7 +524,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = JZCalendarWeekView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zjfjack.JZCalendarWeekView;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -544,7 +548,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = JZCalendarWeekView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zjfjack.JZCalendarWeekView;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
