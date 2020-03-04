@@ -63,10 +63,12 @@ public protocol JZLongPressViewDataSource: class {
 extension JZLongPressViewDataSource {
 	// Default snapshot method
 	public func weekView(_ weekView: JZLongPressWeekView, movingCell: UICollectionViewCell, viewForMoveLongPressAt startDate: Date) -> EventView {
+		let event = (movingCell as! JZLongPressEventCell).event
 		let longPressView = EventView(frame: movingCell.frame)
 		longPressView.layer.cornerRadius = 13
 		longPressView.layer.masksToBounds = true
 		longPressView.clipsToBounds = true
+		longPressView.updateWithDescriptor(event: event!.descriptor)
 		longPressView.backgroundView.backgroundColor = movingCell.contentView.backgroundColor
 		return longPressView
 	}
@@ -539,6 +541,7 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
 		}
 		
 		if state == .began {
+			longPressView.removeFromSuperview()
 			currentEditingInfo.cellSize = currentLongPressType == .move ? currentMovingCell.frame.size : CGSize(width: flowLayout.sectionWidth, height: flowLayout.hourHeight * CGFloat(addNewDurationMins)/60)
 			pressPosition = currentLongPressType == .move ? (pointInCollectionView.x - currentMovingCell.frame.origin.x, pointInCollectionView.y - currentMovingCell.frame.origin.y) :
 				(currentEditingInfo.cellSize.width/2, currentEditingInfo.cellSize.height/2)
@@ -555,7 +558,6 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
 					panGestureRecognizer.cancelsTouchesInView = true
 					
 				}
-				eventView.updateWithDescriptor(event: EventDes())
 			}
 			collectionView.addSubview(longPressView)
 			longPressView.layer.zPosition = CGFloat(flowLayout.zIndexForElementKind(JZSupplementaryViewKinds.editModeEventView))

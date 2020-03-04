@@ -70,7 +70,7 @@ open class EventView: UIView {
 		backgroundView.clipsToBounds = true
 	}
 	
-	func updateWithDescriptor(event: EventDescriptor) {
+	open func updateWithDescriptor(event: EventDescriptor) {
 		if let attributedText = event.attributedText {
 			textView.attributedText = attributedText
 		} else {
@@ -82,7 +82,6 @@ open class EventView: UIView {
 		backgroundView.backgroundColor = event.backgroundColor
 		backgroundColor = .clear
 		color = event.color
-		drawsShadow = event.editedEvent != nil
 		setNeedsDisplay()
 		setNeedsLayout()
 	}
@@ -151,37 +150,6 @@ open class EventView: UIView {
 					   animations: scaleAnimation,
 					   completion: nil)
 	}
-}
-
-protocol EventDescriptor: AnyObject {
-	var startDate: Date {get set}
-	var endDate: Date {get set}
-	var isAllDay: Bool {get}
-	var text: String {get}
-	var attributedText: NSAttributedString? {get}
-	var font : UIFont {get}
-	var color: UIColor {get}
-	var textColor: UIColor {get}
-	var backgroundColor: UIColor {get}
-	var editedEvent: EventDescriptor? {get set}
-	//  func makeEditable() -> Self
-	func commitEditing()
-}
-
-open class EventDes: EventDescriptor {
-	var startDate: Date  = Date()
-	var endDate: Date = Date()
-	var isAllDay: Bool = false
-	var text: String = "SAAAALM"
-	var attributedText: NSAttributedString? = nil
-	var font : UIFont = .boldSystemFont(ofSize: 12)
-	var color: UIColor = .red
-	var textColor: UIColor = .white
-	var backgroundColor: UIColor = .red
-	var editedEvent: EventDescriptor? = nil
-	//	func makeEditable() -> Self {
-	//	}
-	func commitEditing() {}
 }
 
 public class EventResizeHandleView: UIView {

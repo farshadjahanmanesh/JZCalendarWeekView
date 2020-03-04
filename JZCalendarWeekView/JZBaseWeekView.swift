@@ -57,14 +57,14 @@ open class JZBaseWeekView: UIView {
     public var firstDayOfWeek: DayOfWeek?
     public var allEventsBySection: [Date: [JZBaseEvent]]! {
         didSet {
-            self.isAllDaySupported = allEventsBySection is [Date: [JZAllDayEvent]]
+            self.isAllDaySupported = allEventsBySection is [Date: [JZBaseEvent]]
             if isAllDaySupported {
                 setupAllDayEvents()
             }
         }
     }
-    public var notAllDayEventsBySection = [Date: [JZAllDayEvent]]()
-    public var allDayEventsBySection = [Date: [JZAllDayEvent]]()
+    public var notAllDayEventsBySection = [Date: [JZBaseEvent]]()
+    public var allDayEventsBySection = [Date: [JZBaseEvent]]()
 
     public weak var baseDelegate: JZBaseViewDelegate?
     open var contentViewWidth: CGFloat {
@@ -193,9 +193,9 @@ open class JZBaseWeekView: UIView {
         notAllDayEventsBySection.removeAll()
         allDayEventsBySection.removeAll()
         for (date, events) in allEventsBySection {
-            guard let allDayEvents = events as? [JZAllDayEvent] else { continue }
-            notAllDayEventsBySection[date] = allDayEvents.filter { !$0.isAllDay }
-            allDayEventsBySection[date] = allDayEvents.filter { $0.isAllDay }
+            guard let allDayEvents = events as? [JZBaseEvent] else { continue }
+			notAllDayEventsBySection[date] = allDayEvents.filter { !$0.descriptor.isAllDay }
+			allDayEventsBySection[date] = allDayEvents.filter { $0.descriptor.isAllDay }
         }
     }
 
