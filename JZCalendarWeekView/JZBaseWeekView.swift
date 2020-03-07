@@ -22,7 +22,6 @@ extension JZBaseViewDelegate {
 }
 
 open class JZBaseWeekView: UIView {
-
     public var collectionView: JZCollectionView!
     public var flowLayout: JZWeekViewFlowLayout!
 
