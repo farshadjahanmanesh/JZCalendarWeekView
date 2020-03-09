@@ -280,11 +280,26 @@ open class JZBaseWeekView: UIView {
     /// - Parameters:
     ///    - date: this date is the current date in one-day view rather than initDate
     open func updateWeekView(to date: Date) {
-        self.initDate = date.startOfDay.add(component: .day, value: -numOfDays)
-        DispatchQueue.main.async { [unowned self] in
-            self.layoutSubviews()
-            self.forceReload()
-        }
+		let end = getDateForPoint(.init(x:self.collectionView!.contentSize.width,y: self.collectionView!.contentSize.height))
+		let start = getDateForPoint(.zero)
+		if start.compare(date) == date.compare(end) {
+			let sectionSize : Int = (numOfDays * Int(flowLayout.sectionWidth)) - Int((flowLayout.rowHeaderWidth) - flowLayout.contentsMargin.left)
+			([Int](1...(Int(self.collectionView.contentSize.width) / sectionSize))).forEach { section in
+				let end = getDateForPointX(CGFloat(section * sectionSize))
+				let start = getDateForPointX(CGFloat((section - 1) * sectionSize))
+				if date.timeIntervalSince1970 >= start.timeIntervalSince1970 && date.timeIntervalSince1970 <  end.timeIntervalSince1970 {
+					self.collectionView.setContentOffsetWithoutDelegate(CGPoint(x: CGFloat((section - 1) * sectionSize) ,y: self.collectionView.contentOffset.y), animated: true)
+					
+				}
+			}
+		} else {
+			self.initDate = date.startOfDay.add(component: .day, value: -numOfDays)
+
+			DispatchQueue.main.async { [unowned self] in
+				self.layoutSubviews()
+				self.forceReload()
+			}
+		}
     }
 
     /// Vertically scroll collectionView to the specific time in a day.
