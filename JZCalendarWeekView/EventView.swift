@@ -82,6 +82,9 @@ open class EventView: UIView {
 		backgroundView.backgroundColor = event.backgroundColor
 		backgroundColor = .clear
 		color = event.color
+		self.backgroundView.layer.borderColor = descriptor?.borderColor.cgColor
+		self.backgroundView.layer.borderWidth = 2
+		
 		setNeedsDisplay()
 		setNeedsLayout()
 	}
@@ -113,8 +116,6 @@ open class EventView: UIView {
 		return super.hitTest(point, with: event)
 	}
 	
-
-	
 	private var drawsShadow = false
 	
 	override open func layoutSubviews() {
@@ -124,17 +125,16 @@ open class EventView: UIView {
 		let last = eventResizeHandles.last
 		let radius: CGFloat = 40
 		let yPad: CGFloat =  -radius / 2
-		first?.anchorInCorner(.topRight,
-							  xPad: layoutMargins.right * 2,
+		first?.anchorInCorner(.topLeft,
+							  xPad: 0,
 							  yPad: yPad,
 							  width: radius,
 							  height: radius)
-		last?.anchorInCorner(.bottomLeft,
-							 xPad: layoutMargins.left * 2,
+		last?.anchorInCorner(.bottomRight,
+							 xPad: 0 ,
 							 yPad: yPad,
 							 width: radius,
 							 height: radius)
-		
 	}
 	
 	public func animateCreation() {

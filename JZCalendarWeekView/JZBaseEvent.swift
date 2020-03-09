@@ -15,16 +15,20 @@ public protocol EventDescriptor {
 	var color: UIColor {set get}
 	var textColor: UIColor {set get}
 	var backgroundColor: UIColor {set get}
+	var borderColor: UIColor {set get}
+	
 }
 public struct EventDescription: EventDescriptor {
-	public init(isAllDay: Bool,text: String,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor){
+	public init(isAllDay: Bool,text: String,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor, borderColor: UIColor){
 		self.isAllDay = isAllDay
 		self.text = text
 		self.attributedText = attributedText
 		self.font = font
 		self.color = color
 		self.textColor = textColor
+		self.textColor = textColor
 		self.backgroundColor = backgroundColor
+		self.borderColor = borderColor
 	}
 	public var isAllDay: Bool
 	public var text: String
@@ -33,6 +37,7 @@ public struct EventDescription: EventDescriptor {
 	public var color: UIColor
 	public var textColor: UIColor
 	public var backgroundColor: UIColor
+	public var borderColor: UIColor
 }
 open class JZBaseEvent: NSObject, NSCopying {
 
