@@ -153,13 +153,15 @@ open class JZLongPressWeekView: JZBaseWeekView {
 		setupGestures()
 	}
 	var longPressGesture: UILongPressGestureRecognizer!
+	var tapPressGesture: UITapGestureRecognizer!
 	private func setupGestures() {
 		longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPressGesture(_:)))
 		longPressGesture.delegate = self
 		collectionView.addGestureRecognizer(longPressGesture)
 		
-		let tapPressGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissEditing))
+		tapPressGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissEditing))
 		tapPressGesture.delegate = self
+		tapPressGesture.isEnabled = false
 		collectionView.addGestureRecognizer(tapPressGesture)
 	}
 	
@@ -168,6 +170,7 @@ open class JZLongPressWeekView: JZBaseWeekView {
 	private func dismissEditing() {
 		isScrolling = false
 		longPressGesture.isEnabled = true
+		tapPressGesture.isEnabled = false
 		guard longPressView != nil else {return}
 		notifyDurationChange()
 		longPressView.removeFromSuperview()
@@ -661,6 +664,7 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
 		
 		if state == .ended || state == .cancelled {
 			longPressGesture.isEnabled = false
+			tapPressGesture.isEnabled = true
 			longPressTimeLabel.isHidden = true
 			collectionView.isInEditMode = true
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

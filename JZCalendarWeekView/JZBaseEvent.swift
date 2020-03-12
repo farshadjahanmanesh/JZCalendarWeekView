@@ -9,7 +9,7 @@
 import UIKit
 public protocol EventDescriptor {
 	var isAllDay: Bool {set get}
-	var text: String {set get}
+	var text: String? {set get}
 	var attributedText: NSAttributedString? {set get}
 	var font : UIFont {set get}
 	var color: UIColor {set get}
@@ -19,7 +19,7 @@ public protocol EventDescriptor {
 	
 }
 public struct EventDescription: EventDescriptor {
-	public init(isAllDay: Bool,text: String,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor, borderColor: UIColor){
+	public init(isAllDay: Bool,text: String?,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor, borderColor: UIColor){
 		self.isAllDay = isAllDay
 		self.text = text
 		self.attributedText = attributedText
@@ -31,7 +31,7 @@ public struct EventDescription: EventDescriptor {
 		self.borderColor = borderColor
 	}
 	public var isAllDay: Bool
-	public var text: String
+	public var text: String?
 	public var attributedText: NSAttributedString?
 	public var font : UIFont
 	public var color: UIColor
