@@ -42,7 +42,7 @@ open class EventView: UIView {
 	/// The top handle has a tag of `0` and the bottom has a tag of `1`
 	public lazy var eventResizeHandles = [EventResizeHandleView(), EventResizeHandleView()]
 	
-	override init(frame: CGRect) {
+	override public init(frame: CGRect) {
 		super.init(frame: frame)
 		configure()
 	}
@@ -51,7 +51,7 @@ open class EventView: UIView {
 		super.init(coder: aDecoder)
 		configure()
 	}
-	lazy var backgroundView = UIView(frame: .zero)
+	open lazy var backgroundView = UIView(frame: .zero)
 	func configure() {
 		clipsToBounds = true
 		[tapGestureRecognizer, longPressGestureRecognizer].forEach {addGestureRecognizer($0)}
@@ -61,6 +61,7 @@ open class EventView: UIView {
 		for (idx, handle) in eventResizeHandles.enumerated() {
 			handle.tag = idx
 			addSubview(handle)
+            handle.borderColor = .red
 		}
 		
 	
@@ -84,7 +85,9 @@ open class EventView: UIView {
 		color = event.color
 		self.backgroundView.layer.borderColor = descriptor?.borderColor.cgColor
 		self.backgroundView.layer.borderWidth = 2
-		
+        for (idx, handle) in eventResizeHandles.enumerated() {
+            handle.borderColor = (descriptor?.borderColor ?? UIColor.black).withAlphaComponent(0.8)
+        }
 		setNeedsDisplay()
 		setNeedsLayout()
 	}
@@ -176,6 +179,11 @@ public class EventResizeHandleView: UIView {
 	
 	private func configure() {
 		addSubview(dotView)
+        let radius: CGFloat = 10
+        let centerD = (self.frame.width - radius) / 2
+        let origin = CGPoint(x: centerD, y: centerD)
+        let dotSize = CGSize(width: radius, height: radius)
+        dotView.frame = CGRect(origin: origin, size: dotSize)
 		clipsToBounds = false
 		backgroundColor = .clear
 		addGestureRecognizer(panGestureRecognizer)
@@ -183,11 +191,7 @@ public class EventResizeHandleView: UIView {
 	
 	public override func layoutSubviews() {
 		super.layoutSubviews()
-		let radius: CGFloat = 10
-		let centerD = (self.frame.width - radius) / 2
-		let origin = CGPoint(x: centerD, y: centerD)
-		let dotSize = CGSize(width: radius, height: radius)
-		dotView.frame = CGRect(origin: origin, size: dotSize)
+        dotView.center = .init(x:self.bounds.midX, y: self.bounds.midY)
 	}
 }
 public class EventResizeHandleDotView: UIView {
