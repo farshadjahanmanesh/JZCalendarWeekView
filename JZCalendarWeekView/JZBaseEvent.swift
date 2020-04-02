@@ -16,10 +16,12 @@ public protocol EventDescriptor {
 	var textColor: UIColor {set get}
 	var backgroundColor: UIColor {set get}
 	var borderColor: UIColor {set get}
-	
+    var isEditable: Bool {set get}
 }
 public struct EventDescription: EventDescriptor {
-	public init(isAllDay: Bool,text: String?,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor, borderColor: UIColor){
+    public var isEditable: Bool
+    
+    public init(isAllDay: Bool,text: String?,attributedText: NSAttributedString?,font : UIFont,color: UIColor,textColor: UIColor,backgroundColor: UIColor, borderColor: UIColor, isEditable: Bool){
 		self.isAllDay = isAllDay
 		self.text = text
 		self.attributedText = attributedText
@@ -29,6 +31,7 @@ public struct EventDescription: EventDescriptor {
 		self.textColor = textColor
 		self.backgroundColor = backgroundColor
 		self.borderColor = borderColor
+        self.isEditable = isEditable
 	}
 	public var isAllDay: Bool
 	public var text: String?
@@ -43,7 +46,6 @@ open class JZBaseEvent: NSObject, NSCopying {
 
     /// Unique id for each event to identify an event, especially for cross-day events
     public var id: String
-
     public var startDate: Date
     public var endDate: Date
 
@@ -52,7 +54,7 @@ open class JZBaseEvent: NSObject, NSCopying {
     public var intraStartDate: Date
     public var intraEndDate: Date
 	public var descriptor: EventDescriptor
-	public init(id: String, startDate: Date, endDate: Date, descriptor: EventDescriptor) {
+    public init(id: String, startDate: Date, endDate: Date, descriptor: EventDescriptor) {
         self.id = id
         self.startDate = startDate
         self.endDate = endDate
