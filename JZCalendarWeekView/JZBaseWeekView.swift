@@ -24,7 +24,7 @@ extension JZBaseViewDelegate {
 open class JZBaseWeekView: UIView {
     public var collectionView: JZCollectionView!
     public var flowLayout: JZWeekViewFlowLayout!
-    
+    var allDayWillUpdate: ((CGFloat)-> Void)?
     /**
      - The initial date of current collectionView. When page is not scrolling, the inital date is always
      (numOfDays) days before current page first date, which means the start of the collectionView, not the current page first date
@@ -214,6 +214,7 @@ open class JZBaseWeekView: UIView {
         if newAllDayHeader != flowLayout.allDayHeaderHeight {
             // Check whether we need update the allDayHeaderHeight
             if !isScrolling || !willEffectContentSize(difference: flowLayout.allDayHeaderHeight - newAllDayHeader) {
+                allDayWillUpdate?(newAllDayHeader)
                 flowLayout.allDayHeaderHeight = newAllDayHeader
             }
         }

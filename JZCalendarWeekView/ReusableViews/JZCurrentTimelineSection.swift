@@ -12,7 +12,7 @@ open class JZCurrentTimelineSection: UICollectionReusableView {
 
     public var halfBallView = UIView()
     public var lineView = UIView()
-    let halfBallSize: CGFloat = 15
+    let halfBallSize: CGFloat = 10
 
     public override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -22,7 +22,7 @@ open class JZCurrentTimelineSection: UICollectionReusableView {
 
     open func setupUI() {
         self.addSubviews([halfBallView, lineView])
-        halfBallView.setAnchorCenterVerticallyTo(view: self, widthAnchor: halfBallSize, heightAnchor: halfBallSize, leadingAnchor: (leadingAnchor, 0))
+        halfBallView.setAnchorCenterVerticallyTo(view: self, widthAnchor: halfBallSize, heightAnchor: halfBallSize, leadingAnchor: (leadingAnchor, -5))
         lineView.setAnchorCenterVerticallyTo(view: self, heightAnchor: 1, leadingAnchor: (halfBallView.trailingAnchor, 0), trailingAnchor: (trailingAnchor, 0))
 		halfBallView.layer.borderColor = UIColor.white.cgColor
 		halfBallView.layer.borderWidth = 2

@@ -325,7 +325,8 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
             let itemMaxX = (itemMinX + (sectionWidth - (itemMargin.left + itemMargin.right))).toDecimal1Value()
             let itemMaxY = (endHourY + endMinuteY + calendarStartY - itemMargin.bottom).toDecimal1Value()
 
-            attributes.frame = CGRect(x: itemMinX, y: itemMinY, width: itemMaxX - itemMinX, height: itemMaxY - itemMinY)
+            attributes.frame = CGRect(x: itemMinX, y: itemMinY, width: itemMaxX - itemMinX, height: max(hourHeight / 2,itemMaxY - itemMinY))
+            
             attributes.zIndex = zIndexForElementKind(JZSupplementaryViewKinds.eventCell)
             sectionItemAttributes.append(attributes)
         }

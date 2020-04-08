@@ -75,7 +75,7 @@ open class EventView: UIView {
 		if let attributedText = event.attributedText {
 			textView.attributedText = attributedText
 		} else {
-			textView.text = event.text
+			textView.text = event.text ?? "No Title"
 			textView.textColor = event.textColor
 			textView.font = event.font
 		}
