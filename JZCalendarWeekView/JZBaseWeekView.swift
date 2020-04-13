@@ -251,7 +251,6 @@ open class JZBaseWeekView: UIView {
             strongSelf.collectionView.setContentOffsetWithoutDelegate(CGPoint(x: strongSelf.contentViewWidth, y: strongSelf.getYOffset()), animated: false)
             strongSelf.isMovingToNewDate = false
             
-            
             strongSelf.flowLayout.invalidateLayoutCache()
             strongSelf.collectionView.reloadData()
             strongSelf.setHorizontalEdgesOffsetX()
