@@ -64,10 +64,9 @@ open class EventView: UIView {
             handle.borderColor = .red
 		}
 		
-	
 		self.insertSubview(backgroundView, at: 0)
 		backgroundView.setAnchorConstraintsFullSizeTo(view: self)
-		backgroundView.layer.cornerRadius = 8
+		backgroundView.layer.cornerRadius = 0
 		backgroundView.clipsToBounds = true
 	}
 	
@@ -128,12 +127,12 @@ open class EventView: UIView {
 		let last = eventResizeHandles.last
 		let radius: CGFloat = 40
 		let yPad: CGFloat =  -radius / 2
-		first?.anchorInCorner(.topLeft,
+		first?.anchorInCorner(.topRight,
 							  xPad: 0,
 							  yPad: yPad,
 							  width: radius,
 							  height: radius)
-		last?.anchorInCorner(.bottomRight,
+		last?.anchorInCorner(.bottomLeft,
 							 xPad: 0 ,
 							 yPad: yPad,
 							 width: radius,
@@ -179,7 +178,7 @@ public class EventResizeHandleView: UIView {
 	
 	private func configure() {
 		addSubview(dotView)
-        let radius: CGFloat = 10
+        let radius: CGFloat = 8
         let centerD = (self.frame.width - radius) / 2
         let origin = CGPoint(x: centerD, y: centerD)
         let dotSize = CGSize(width: radius, height: radius)

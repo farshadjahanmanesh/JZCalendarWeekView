@@ -29,7 +29,7 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
     var minuteHeight: CGFloat { return hourHeight / 60 }
 
     open var defaultHourHeight: CGFloat { return 80 }
-    open var defaultRowHeaderWidth: CGFloat { return 90 }
+    open var defaultRowHeaderWidth: CGFloat { return 43 }
     open var defaultColumnHeaderHeight: CGFloat { return 44 }
     open var defaultHourGridDivision: JZHourGridDivision { return .noneDiv }
     // You can change following constants
