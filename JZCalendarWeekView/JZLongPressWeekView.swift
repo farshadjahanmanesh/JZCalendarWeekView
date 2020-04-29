@@ -15,7 +15,7 @@ public protocol JZLongPressViewDelegate: class {
     /// - Parameters:
     ///   - weekView: current long pressed JZLongPressWeekView
     ///   - startDate: the startDate of the event when gesture ends
-    func weekView(_ weekView: JZLongPressWeekView, didEndAddNewLongPressAt startDate: Date, pendingEventView: EventView) -> JZBaseEvent
+    func weekView(_ weekView: JZLongPressWeekView, didEndAddNewFrom startDate: Date, to endDate: Date, pendingEventView: EventView)
     
     /// When Move long press gesture ends, this function will be called.
     /// You should handle what should be done after editing (moving) a existed event.
@@ -127,13 +127,13 @@ open class JZLongPressWeekView: JZBaseWeekView {
     /// For an addNew event, the event duration mins determine the add new event duration and height
     public var addNewDurationMins: Int = 120
     open var timeLabelBoldFont: UIFont = UIFont.systemFont(ofSize: 12)
-//    /// The longPressTimeLabel along with longPressView, can be customised
-//    open lazy var longPressTimeLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = timeLabelBoldFont
-//        label.textColor = UIColor.black
-//        return label
-//    }()
+    //    /// The longPressTimeLabel along with longPressView, can be customised
+    //    open lazy var longPressTimeLabel: UILabel = {
+    //        let label = UILabel()
+    //        label.font = timeLabelBoldFont
+    //        label.textColor = UIColor.black
+    //        return label
+    //    }()
     /// The moving cell contentView layer opacity (when you move the existing cell, the previous cell will be translucent)
     /// If your cell background alpha below this value, you should decrease this value as well
     public var movingCellOpacity: Float = 0
@@ -150,7 +150,9 @@ open class JZLongPressWeekView: JZBaseWeekView {
     /// The most right X in the collectionView that you want longPress gesture enable.
     /// If you customise some decoration and supplementry views on right, **must** override this variable
     open var longPressRightMarginX: CGFloat { return frame.width }
-    
+    private lazy var daysXPosition: [(Int,CGRect)] = {
+        return (0...2).map({($0 , CGRect.init(x: self.longPressLeftMarginX + CGFloat($0) * self.flowLayout.sectionWidth, y:0 , width: self.flowLayout.sectionWidth, height: self.collectionView.contentSize.height))})
+    }()
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupGestures()
@@ -215,11 +217,13 @@ open class JZLongPressWeekView: JZBaseWeekView {
         self.acceptedDateAfterMove = Date()
         self.oldCenter = .zero
         isLongPressing = false
+        firstMovementIsUp = nil
+        prevOffset = .zero
         getCurrentMovingCells().forEach {
             $0.contentView.layer.opacity = 1
             currentEditingInfo.allOpacityContentViews.append($0.contentView)
         }
-//        longPressTimeLabel.removeFromSuperview()
+        //        longPressTimeLabel.removeFromSuperview()
         collectionView.isInEditMode = false
         
         self.scrollDirection = nil
@@ -247,25 +251,25 @@ open class JZLongPressWeekView: JZBaseWeekView {
         let clock = start.getTimeIgnoreSecondsFormat()
         let end = Calendar.current.date(byAdding: .minute, value: duration, to: start)?.getTimeIgnoreSecondsFormat() ?? ""
         self.longPressView!.textView.text = "\(clock) - \(end)"
-
+        
         updateTimeLabelText(time: start)
-//        updateTimeLabelPosition(pointInSelf: pointInSelf)
+        //        updateTimeLabelPosition(pointInSelf: pointInSelf)
     }
     
     /// Update time label content, this method can be overridden
     open func updateTimeLabelText(time: Date) {
         
-//        longPressTimeLabel.text = clock
-//        longPressTimeLabel.isHidden = false
-//        longPressTimeLabel.font = clock.contains(":00") ? self.timeLabelRegularFont : self.timeLabelBoldFont
+        //        longPressTimeLabel.text = clock
+        //        longPressTimeLabel.isHidden = false
+        //        longPressTimeLabel.font = clock.contains(":00") ? self.timeLabelRegularFont : self.timeLabelBoldFont
     }
     
     /// Update the position for the time label
-//    private func updateTimeLabelPosition(pointInSelf: CGPoint) {
-//        longPressTimeLabel.frame.origin.y = pointInSelf.y - longPressTimeLabel.frame.height / 2
-//        longPressTimeLabel.sizeToFit()
-//        longPressTimeLabel.frame.origin.x = longPressLeftMarginX - (longPressTimeLabel.frame.width + 15)
-//    }
+    //    private func updateTimeLabelPosition(pointInSelf: CGPoint) {
+    //        longPressTimeLabel.frame.origin.y = pointInSelf.y - longPressTimeLabel.frame.height / 2
+    //        longPressTimeLabel.sizeToFit()
+    //        longPressTimeLabel.frame.origin.x = longPressLeftMarginX - (longPressTimeLabel.frame.width + 15)
+    //    }
     
     /// When dragging the longPressView, the collectionView should scroll with the drag point.
     /// - The logic of vertical scroll is top scroll depending on **longPressView top** to longPressTopMarginY, bottom scroll denpending on **finger point** to LongPressBottomMarginY.
@@ -383,11 +387,11 @@ open class JZLongPressWeekView: JZBaseWeekView {
         
         // timeText width will change from 00:00 - 24:00, and for each time the length will be different
         // add 5 to ensure the max width
-//        let labelHeight: CGFloat = 15
-//        let textWidth = UILabel.getLabelWidth(labelHeight, font: longPressTimeLabel.font, text: "23:59") + 5
-//        let timeLabelWidth = max(selectedCell?.bounds.width ?? flowLayout.sectionWidth, textWidth)
-//        longPressTimeLabel.frame = CGRect(x: 0, y: self.center.y, width: timeLabelWidth, height: labelHeight)
-//        longPressView.setDefaultShadow()
+        //        let labelHeight: CGFloat = 15
+        //        let textWidth = UILabel.getLabelWidth(labelHeight, font: longPressTimeLabel.font, text: "23:59") + 5
+        //        let timeLabelWidth = max(selectedCell?.bounds.width ?? flowLayout.sectionWidth, textWidth)
+        //        longPressTimeLabel.frame = CGRect(x: 0, y: self.center.y, width: timeLabelWidth, height: labelHeight)
+        //        longPressView.setDefaultShadow()
         return longPressView
     }
     
@@ -472,6 +476,9 @@ open class JZLongPressWeekView: JZBaseWeekView {
     }
     private lazy var snapVerticalSize =  {CGFloat(15) * self.flowLayout.hourHeight / 60}()
     private var prevOffset: CGPoint = .zero
+    private var originalNewEventOffset: CGRect = .zero
+    private var firstMovementIsUp: Bool? = nil
+    
     private var prevScrollOffset: CGPoint = .zero
     let haptic = UIImpactFeedbackGenerator(style: .light)
     private var oldCenter: CGPoint = .zero
@@ -497,7 +504,6 @@ open class JZLongPressWeekView: JZBaseWeekView {
             UIView.animate(withDuration: 0.1) {gestureRecognizer.view?.subviews[0].transform = .init(scaleX: 2, y: 2)}
             
             prevScrollOffset = .zero
-//            longPressTimeLabel.isHidden = false
             getCurrentMovingCells().forEach {
                 $0.contentView.layer.opacity = movingCellOpacity
                 currentEditingInfo.allOpacityContentViews.append($0.contentView)
@@ -513,7 +519,7 @@ open class JZLongPressWeekView: JZBaseWeekView {
         let longPressViewStartDate = getLongPressViewStartDate(pointInCollectionView: pointInCollectionView, pointInSelfView: pointInSelfView)
         //        print(longPressViewStartDate.getTimeIgnoreSecondsFormat())
         if gestureRecognizer.state == .ended || state == .cancelled {
-//            longPressTimeLabel.isHidden = true
+            //            longPressTimeLabel.isHidden = true
             // startDate
             if gestureRecognizer.view!.tag == 0 {
                 currentEditingInfo.event.startDate = longPressViewStartDate
@@ -662,9 +668,8 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
         currentEditingInfo.event.startDate = acceptedDateAfterMove
         currentEditingInfo.event.endDate =  Calendar.current.date(byAdding: .minute, value: duration, to: acceptedDateAfterMove)!
         longPressDelegate?.weekView(self,editingEvent: currentEditingInfo.event, cellCenter: longPressView.center, startDate: acceptedDateAfterMove, duration: Calendar.current.dateComponents([.minute], from: currentEditingInfo.event.startDate, to: currentEditingInfo.event.endDate).minute!)
-         self.updateTimeLabel(start: self.acceptedDateAfterMove, duration: duration)
+        self.updateTimeLabel(start: self.acceptedDateAfterMove, duration: duration)
     }
-    
     
     private func automaticScroll (pointInSelfView: CGPoint, pointInCollectionView: CGPoint, playgroundBounds: CGRect) {
         if pointInSelfView.x > playgroundBounds.maxX - 30, self.scrollTimer == nil {
@@ -729,15 +734,90 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
         }
     }
     
+    @objc private func handleNewEventLongPressGesture(pointInSelfView: CGPoint, pointInCollectionView: CGPoint) {
+        let topYPoint = max(pointInSelfView.y - pressPosition!.yToViewTop, longPressTopMarginY)
+        let height = mapToVerticalSnap(currentEditingInfo.cellSize.height)
+        var newCoord = pointInCollectionView
+        var diff = CGPoint(x: newCoord.x - prevOffset.x,
+                           y: newCoord.y  - prevOffset.y)
+        var topHandler: Bool = diff.y < 0
+        guard let pendingEvent = longPressView else {return}
+        if (firstMovementIsUp == nil && diff.y == 0) {return}
+        if firstMovementIsUp == nil || pendingEvent.frame.size.height < self.flowLayout.hourHeight / 2{
+            // reset every thing
+            pendingEvent.frame = originalNewEventOffset
+            firstMovementIsUp = topHandler
+
+            pendingEvent.frame.size.height = pendingEvent.frame.size.height / 2
+            currentEditingInfo.event.startDate = getLongPressViewStartDate(pointInCollectionView: .init(x:pendingEvent.frame.origin.x, y: pendingEvent.frame.origin.y + (2 * snapVerticalSize)), pointInSelfView: pointInSelfView)
+            currentEditingInfo.event.endDate = getLongPressViewStartDate(pointInCollectionView: .init(x: pendingEvent.frame.midX,y:pendingEvent.frame.maxY + (2 * snapVerticalSize)), pointInSelfView: pointInSelfView)
+        }
+        let newPointInSelfView: CGPoint
+        let newPointInCollectionView: CGPoint
+        
+        if firstMovementIsUp! {
+            newPointInSelfView = collectionView.convert(pendingEvent.frame.origin, to: self)
+            newPointInCollectionView = .init(x:pendingEvent.frame.origin.x, y: pendingEvent.frame.origin.y + (2 * snapVerticalSize))
+        } else {
+            newPointInSelfView = collectionView.convert(CGPoint.init(x: pendingEvent.frame.midX ,y:pendingEvent.frame.maxY), to: self)
+            newPointInCollectionView = .init(x: pendingEvent.frame.midX,y:pendingEvent.frame.maxY + (2 * snapVerticalSize))
+        }
+        
+        if pointInSelfView.y > self.frame.height * 0.7 {
+            if self.collectionView.contentOffset.y <  floor(abs(self.collectionView.contentSize.height - self.collectionView.bounds.size.height + self.collectionView.contentInset.bottom)) {
+                self.collectionView.contentOffset = .init(x: self.collectionView.contentOffset.x, y: self.collectionView.contentOffset.y + (diff.y / 1.7))
+            }
+        } else if pointInSelfView.y < self.frame.height * 0.6{
+            if self.collectionView.contentOffset.y >  0  {
+                self.collectionView.contentOffset = .init(x: self.collectionView.contentOffset.x, y: self.collectionView.contentOffset.y + (diff.y / 1.7))
+            }
+        }
+        
+        // pressPosition is nil only when state equals began
+        // The startDate of the longPressView (the date of top Y in longPressView)
+        let longPressViewStartDate = getLongPressViewStartDate(pointInCollectionView: newPointInCollectionView, pointInSelfView: newPointInSelfView)
+        if firstMovementIsUp! {
+            currentEditingInfo.event.startDate = longPressViewStartDate
+        } else {
+            currentEditingInfo.event.endDate = longPressViewStartDate
+        }
+
+        updateTimeLabel(start: currentEditingInfo.event.startDate, duration: currentEditingInfo.eventDuration)
+        var suggestedEventFrame = pendingEvent.frame
+        let padding : CGFloat = 12
+        let changeOffset = diff.y
+        if firstMovementIsUp! { // Top handle
+            suggestedEventFrame.origin.y +=  changeOffset
+            suggestedEventFrame.size.height -= changeOffset
+            if diff.y < 0, suggestedEventFrame.origin.y < longPressTopMarginY + padding {
+                suggestedEventFrame = pendingEvent.frame
+            }
+        } else { // Bottom handle
+            suggestedEventFrame.size.height += changeOffset
+            if diff.y > 0, suggestedEventFrame.maxY > collectionView.contentSize.height - padding / 2 {
+                suggestedEventFrame = pendingEvent.frame
+            }
+        }
+        
+        let minimumMinutesEventDurationWhileEditing = CGFloat(15)
+        let minimumEventHeight = minimumMinutesEventDurationWhileEditing * flowLayout.hourHeight / 60
+        let suggestedEventHeight = suggestedEventFrame.size.height
+        if suggestedEventHeight > minimumEventHeight {
+            pendingEvent.frame = suggestedEventFrame
+            prevOffset = newCoord
+        }
+        diff.y = 0
+        oldCenter = newCoord
+    }
+    
     /// The basic longPressView position logic is moving with your finger's original position.
     /// - The Move type longPressView will keep the relative position during this longPress, that's how Apple Calendar did.
     /// - The AddNew type longPressView will be created centrally at your finger press position
     @objc private func handleLongPressGesture(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        let widthBound: CGFloat = 50
+        let widthBound: CGFloat = (flowLayout.sectionWidth / 2) + 1
         var pointInSelfView = gestureRecognizer.location(in: self)
         /// Used for get startDate of longPressView
         var pointInCollectionView = gestureRecognizer.location(in: collectionView)
-        
         var playgroundBounds = CGRect(x: longPressLeftMarginX, y: longPressTopMarginY + snapVerticalSize, width: self.frame.size.width - longPressLeftMarginX - widthBound - snapVerticalSize , height: longPressBottomMarginY - (longPressTopMarginY + snapVerticalSize + snapVerticalSize))
         let xxxxssssxxx = UIView(frame: playgroundBounds)
         xxxxssssxxx.backgroundColor = .red
@@ -788,6 +868,7 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
         // pressPosition is nil only when state equals began
         if pressPosition != nil {
             longPressViewStartDate = getLongPressViewStartDate(pointInCollectionView: .init(x:pointInCollectionView.x + (diff.x > 0 ? 0 : -50) , y:pointInCollectionView.y), pointInSelfView: pointInSelfView)
+            
         }
         
         if state == .began || gestureRecognizer == tapPressToAddNew{
@@ -825,7 +906,7 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
                 dismissEditing()
                 return
             }
-            if let eventView = longPressView as? EventView {
+            if let eventView = longPressView, currentLongPressType != .addNew {
                 let tapToShowDetails = UITapGestureRecognizer()
                 tapToShowDetails.addTarget(self, action: #selector(openDetailsView))
                 tapToShowDetails.cancelsTouchesInView = true
@@ -836,11 +917,15 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
                     panGestureRecognizer.cancelsTouchesInView = true
                     //                    handle.isHidden = true
                 }
+            } else {
+                for handle in longPressView!.eventResizeHandles {
+                     handle.isHidden = true
+                }
             }
             addLongPressGestureToPendingView()
             
-//            self.addSubview(longPressTimeLabel)
-//            longPressTimeLabel.layer.zPosition = CGFloat(flowLayout.zIndexForElementKind(JZSupplementaryViewKinds.timeLabelIndicator))
+            //            self.addSubview(longPressTimeLabel)
+            //            longPressTimeLabel.layer.zPosition = CGFloat(flowLayout.zIndexForElementKind(JZSupplementaryViewKinds.timeLabelIndicator))
             
             self.addSubview(longPressView!)
             haptic.impactOccurred()
@@ -849,7 +934,7 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
             let center =  self.longPressLeftMarginX + (floor((pointInSelfView.x) / flowLayout.sectionWidth) * flowLayout.sectionWidth)
             longPressView!.center = CGPoint(x: center - (flowLayout.sectionWidth / 2),
                                             y: topYPoint + mapToVerticalSnap(currentEditingInfo.cellSize.height/2))
-            
+            longPressView!.center.x = daysXPosition.first(where: {$0.1.contains(.init(x: pointInSelfView.x, y: 0))})?.1.midX ?? longPressLeftMarginX + (flowLayout.sectionWidth / 2)
             acceptMoves(poistion: longPressView!.center, date:  longPressViewStartDate)
             
             if currentLongPressType == .move {
@@ -875,7 +960,9 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
                             }
                             
                             longPressViewStartDate = getLongPressViewStartDate(pointInCollectionView: longPressView!.superview!.convert(.init(x:longPressView!.frame.origin.x, y: longPressView!.frame.origin.y + 5), to: collectionView), pointInSelfView: .init(x:longPressView!.frame.origin.x, y: longPressView!.frame.origin.y))
+                            
                             acceptMoves(poistion: longPressView!.center, date:  longPressViewStartDate)
+                            
                         }
                         y += snapVerticalSize
                     }
@@ -900,6 +987,19 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
         }
         
         if state == .changed {
+            
+            guard currentLongPressType != .addNew else{
+                if prevOffset == .zero {
+                    prevOffset = pointInCollectionView
+                    let center = self.convert(longPressView!.center, to: collectionView)
+                    self.collectionView.addSubview(longPressView!)
+                    longPressView?.center = center
+                    originalNewEventOffset = longPressView!.frame
+                }
+                
+                handleNewEventLongPressGesture(pointInSelfView: pointInSelfView, pointInCollectionView: pointInCollectionView)
+                return
+            }
             automaticScroll(pointInSelfView: pointInSelfView, pointInCollectionView: pointInCollectionView, playgroundBounds: playgroundBounds)
             if self.scrollTimer != nil, playgroundBounds.contains(pointInSelfView) {
                 self.scrollTimer?.invalidate()
@@ -917,21 +1017,21 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
             var diff = CGPoint(x: newCoord.x - oldCenter.x,
                                y: newCoord.y  - oldCenter.y)
             var snapToNextDay = diff.x > 0 ? abs(diff.x) > flowLayout.sectionWidth / 2 : abs(diff.x) > flowLayout.sectionWidth
-            print(diff.x)
-            if abs(diff.y) < snapVerticalSize && !snapToNextDay {
+            // just put a -2 when event is moving up to have some margin
+            if abs(diff.y) < snapVerticalSize + (diff.y < 0 ? -2 : 0) && !snapToNextDay {
                 return
             }
             if snapToNextDay  {
                 newCoord.x =  self.longPressLeftMarginX + (ceil((pointInSelfView.x) / flowLayout.sectionWidth) * flowLayout.sectionWidth)
                 newCoord.x -= (flowLayout.sectionWidth / 2)
                 newCoord.y = oldCenter.y
-
+                
                 diff.x = 0
                 
             } else {
                 newCoord.x = currentMovingCell?.frame.midX ?? oldCenter.x
                 newCoord.y = diff.y > 0 ? oldCenter.y + snapVerticalSize : oldCenter.y - snapVerticalSize
-
+                
             }
             
             longPressView!.center = newCoord
@@ -969,17 +1069,18 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
                 guard longPressView != nil else {
                     gestureRecognizer.isEnabled = false
                     gestureRecognizer.isEnabled = true
-                     dismissEditing()
+                    dismissEditing()
                     return
                 }
-                let event = longPressDelegate?.weekView(self, didEndAddNewLongPressAt: acceptedDateAfterMove, pendingEventView: longPressView as! EventView)
-                self.currentEditingInfo.event = event
+                self.longPressDelegate?.weekView(self, didEndAddNewFrom: currentEditingInfo.event.startDate, to: currentEditingInfo.event.endDate, pendingEventView: longPressView!)
+                dismissEditing()
+                return
             } else if currentLongPressType == .move {
-               
+                
                 guard longPressViewStartDate != nil, longPressView != nil, currentEditingInfo.event != nil  else {
                     gestureRecognizer.isEnabled = false
                     gestureRecognizer.isEnabled = true
-                     dismissEditing()
+                    dismissEditing()
                     return
                 }
                 
@@ -993,20 +1094,22 @@ extension JZLongPressWeekView: UIGestureRecognizerDelegate {
             gestureRecognizer.isEnabled = true
             return
         }
-//        if state == .began || state == .changed  {
-//            updateTimeLabel(start: longPressViewStartDate, duration: self.currentEditingInfo.eventDuration)
-//        }
+        //        if state == .began || state == .changed  {
+        //            updateTimeLabel(start: longPressViewStartDate, duration: self.currentEditingInfo.eventDuration)
+        //        }
         if (state == .ended || state == .cancelled)  && longPressView != nil{
             collectionView.addSubview(longPressView!)
             longPressView!.center = self.convert(oldCenter, to: collectionView)
         }
         if state == .ended || state == .cancelled {
-            
+            if currentLongPressType == .addNew {
+                
+            }
             scrollTimer = nil
             longPressToEditGesture.isEnabled = false
             tapPressToDismissGesture.isEnabled = true
             tapPressToAddNew.isEnabled = false
-//            longPressTimeLabel.isHidden = true
+            //            longPressTimeLabel.isHidden = true
             collectionView.isInEditMode = true
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
