@@ -13,7 +13,7 @@ open class JZRowHeaderBackground: UICollectionReusableView {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = UIColor.white
-
+		self.layer.zPosition = 1007
     }
 
     required public init?(coder aDecoder: NSCoder) {

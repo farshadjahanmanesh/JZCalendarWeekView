@@ -9,11 +9,11 @@
 import UIKit
 
 public class JZCollectionView: UICollectionView {
-
+	public var isInEditMode = false
     public var registeredCells = [String]() // [identifiers]
     public var registeredSupplementaryClasses = [String: String]()   // [kind:identifiers]
-
-    public override func register(_ nib: UINib?, forCellWithReuseIdentifier identifier: String) {
+	
+	public override func register(_ nib: UINib?, forCellWithReuseIdentifier identifier: String) {
         super.register(nib, forCellWithReuseIdentifier: identifier)
         registeredCells.append(identifier)
     }

@@ -22,13 +22,15 @@ class LongPressWeekView: JZLongPressWeekView {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LongPressEventCell.className, for: indexPath) as? LongPressEventCell,
             let event = getCurrentEvent(with: indexPath) as? AllDayEvent {
             cell.configureCell(event: event)
+			
             return cell
         }
         preconditionFailure("LongPressEventCell and AllDayEvent should be casted")
     }
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == JZSupplementaryViewKinds.allDayHeader {
+
+		if kind == JZSupplementaryViewKinds.allDayHeader {
             guard let alldayHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kind, for: indexPath) as? JZAllDayHeader else {
                 preconditionFailure("SupplementaryView should be JZAllDayHeader")
             }
@@ -36,9 +38,15 @@ class LongPressWeekView: JZLongPressWeekView {
             let events = allDayEventsBySection[date]
             let views = getAllDayHeaderViews(allDayEvents: events as? [AllDayEvent] ?? [])
             alldayHeader.updateView(views: views)
+			alldayHeader.layer.zPosition = CGFloat(flowLayout.zIndexForElementKind(kind))
             return alldayHeader
         }
-        return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
+        let cell = super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
+		if kind == JZSupplementaryViewKinds.columnHeader {
+			cell.backgroundColor = .white
+		}
+		cell.layer.zPosition = CGFloat(flowLayout.zIndexForElementKind(kind))
+		return cell
     }
 
     private func getAllDayHeaderViews(allDayEvents: [AllDayEvent]) -> [UIView] {

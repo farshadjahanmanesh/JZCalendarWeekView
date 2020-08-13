@@ -18,7 +18,7 @@ public protocol WeekViewFlowLayoutDelegate: class {
 }
 
 open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
-
+	
     // UI params
     var hourHeight: CGFloat!
     var rowHeaderWidth: CGFloat!
@@ -28,14 +28,14 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
     public var hourGridDivision: JZHourGridDivision!
     var minuteHeight: CGFloat { return hourHeight / 60 }
 
-    open var defaultHourHeight: CGFloat { return 50 }
-    open var defaultRowHeaderWidth: CGFloat { return 42 }
+    open var defaultHourHeight: CGFloat { return 80 }
+    open var defaultRowHeaderWidth: CGFloat { return 43 }
     open var defaultColumnHeaderHeight: CGFloat { return 44 }
     open var defaultHourGridDivision: JZHourGridDivision { return .noneDiv }
     // You can change following constants
     open var defaultGridThickness: CGFloat { return 0.5 }
     open var defaultCurrentTimeLineHeight: CGFloat { return 10 }
-    open var defaultAllDayOneLineHeight: CGFloat { return 30 }
+    open var defaultAllDayOneLineHeight: CGFloat { return 48 }
     /// Margin for the flowLayout in collectionView
     open var contentsMargin: UIEdgeInsets { return UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0) }
     open var itemMargin: UIEdgeInsets { return UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1) }
@@ -87,7 +87,7 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
     // Default UI parameters Initializer
     override init() {
         super.init()
-
+		
         setupUIParams()
         initializeMinuteTick()
     }
@@ -325,7 +325,8 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
             let itemMaxX = (itemMinX + (sectionWidth - (itemMargin.left + itemMargin.right))).toDecimal1Value()
             let itemMaxY = (endHourY + endMinuteY + calendarStartY - itemMargin.bottom).toDecimal1Value()
 
-            attributes.frame = CGRect(x: itemMinX, y: itemMinY, width: itemMaxX - itemMinX, height: itemMaxY - itemMinY)
+            attributes.frame = CGRect(x: itemMinX, y: itemMinY, width: itemMaxX - itemMinX, height: max(hourHeight / 2,itemMaxY - itemMinY))
+            
             attributes.zIndex = zIndexForElementKind(JZSupplementaryViewKinds.eventCell)
             sectionItemAttributes.append(attributes)
         }
@@ -782,22 +783,24 @@ open class JZWeekViewFlowLayout: UICollectionViewFlowLayout {
     open func zIndexForElementKind(_ kind: String) -> Int {
         switch kind {
         case JZSupplementaryViewKinds.cornerHeader, JZDecorationViewKinds.allDayCorner:
-            return minOverlayZ + 10
+            return minOverlayZ + 11
         case JZSupplementaryViewKinds.allDayHeader:
-            return minOverlayZ + 9
+            return minOverlayZ + 10
         case JZDecorationViewKinds.allDayHeaderBackground:
-            return minOverlayZ + 8
+            return minOverlayZ + 9
         case JZSupplementaryViewKinds.rowHeader:
-            return minOverlayZ + 7
+            return minOverlayZ + 8
         case JZDecorationViewKinds.rowHeaderBackground:
-            return minOverlayZ + 6
+            return minOverlayZ + 7
         case JZSupplementaryViewKinds.columnHeader:
-            return minOverlayZ + 5
+            return minOverlayZ + 6
         case JZDecorationViewKinds.columnHeaderBackground:
+            return minOverlayZ + 5
+		case JZSupplementaryViewKinds.currentTimeline:
             return minOverlayZ + 4
-        case JZSupplementaryViewKinds.currentTimeline:
-            return minOverlayZ + 3
-        case JZDecorationViewKinds.horizontalGridline:
+		case JZSupplementaryViewKinds.editModeEventView:
+				   return minOverlayZ + 3
+        case JZDecorationViewKinds.horizontalGridline, JZSupplementaryViewKinds.timeLabelIndicator:
             return minBackgroundZ + 2
         case JZDecorationViewKinds.verticalGridline:
             return minBackgroundZ + 1

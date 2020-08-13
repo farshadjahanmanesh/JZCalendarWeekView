@@ -24,11 +24,12 @@ open class JZCurrentTimelineSection: UICollectionReusableView {
         self.addSubviews([halfBallView, lineView])
         halfBallView.setAnchorCenterVerticallyTo(view: self, widthAnchor: halfBallSize, heightAnchor: halfBallSize, leadingAnchor: (leadingAnchor, -5))
         lineView.setAnchorCenterVerticallyTo(view: self, heightAnchor: 1, leadingAnchor: (halfBallView.trailingAnchor, 0), trailingAnchor: (trailingAnchor, 0))
-
-        halfBallView.backgroundColor = JZWeekViewColors.today
+		halfBallView.layer.borderColor = UIColor.white.cgColor
+		halfBallView.layer.borderWidth = 2
+		halfBallView.backgroundColor = .black
         halfBallView.layer.cornerRadius = halfBallSize/2
-        lineView.backgroundColor = JZWeekViewColors.today
-        self.clipsToBounds = true
+		lineView.backgroundColor = .black
+        self.clipsToBounds = false
     }
 
     required public init?(coder aDecoder: NSCoder) {

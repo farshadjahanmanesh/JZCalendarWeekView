@@ -12,7 +12,9 @@ public enum JZSupplementaryViewKinds {
     public static let cornerHeader = JZCornerHeader.className
     public static let allDayHeader = JZAllDayHeader.className
     public static let eventCell = "eventCell"
+	public static let timeLabelIndicator = "timeLabelIndicator"
     public static let currentTimeline = "currentTimeline"
+	public static let editModeEventView = "editModeEventview"
 }
 
 public enum JZDecorationViewKinds {

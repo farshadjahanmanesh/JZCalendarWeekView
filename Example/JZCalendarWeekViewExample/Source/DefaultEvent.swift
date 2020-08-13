@@ -19,7 +19,7 @@ class DefaultEvent: JZBaseEvent {
         self.title = title
 
         // If you want to have you custom uid, you can set the parent class's id with your uid or UUID().uuidString (In this case, we just use the base class id)
-        super.init(id: id, startDate: startDate, endDate: endDate)
+		super.init(id: id, startDate: startDate, endDate: endDate, descriptor: EventDescription.init(isAllDay: true, text: "sss", attributedText: nil, font: .boldSystemFont(ofSize: 12), color: .red, textColor: .white, backgroundColor: .blue))
     }
 
     override func copy(with zone: NSZone?) -> Any {

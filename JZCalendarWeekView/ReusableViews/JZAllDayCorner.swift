@@ -28,6 +28,8 @@ open class JZAllDayCorner: UICollectionReusableView {
         lblTitle.font = UIFont.systemFont(ofSize: 12)
         // Support iPhone X Landscape state (same as JZRowHeader)
         lblTitle.setAnchorCenterVerticallyTo(view: self, trailingAnchor: (self.trailingAnchor, -2))
+		self.layer.zPosition = 1011
+
     }
 
     open func setupBottomDivider() {
